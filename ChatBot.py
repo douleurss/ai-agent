@@ -39,5 +39,11 @@ class ChatBot:
 # 测试运行
 if __name__ == "__main__":
     bot=ChatBot()
-    print(bot.send_message("你好"))
+    print("开始对话，输入 exit 结束聊天")
+    while True:
+        issue = input()
+        ans = bot.send_message(issue)
+        print(ans)
+        if issue == "exit":
+            break
     # print(bot.show_history())
