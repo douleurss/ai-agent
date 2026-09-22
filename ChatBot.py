@@ -1,6 +1,7 @@
 import os
 import requests
 from dotenv import load_dotenv
+import gradio as gr
 
 load_dotenv()
 
@@ -10,22 +11,24 @@ class ChatBot:
         self.api_url = os.getenv("DASHSCOPE_CHAT_URL")
         self.history = []  # 用列表保存聊天历史
 
-    def send_message(self, user_input):
-        # 发消息的方法：接收用户输入，返回回复
-        self.history.append({"role": "user", "content": user_input})
+    def chat_fn(self, message, history):
+        messages = []
+        for msg in history:
+            messages.append({"role": msg["role"], "content": msg["content"]})
+        messages.append({"role": "user", "content": message})
+
         data = {
             "model": "qwen-turbo",
-            "messages":self.history,
-            "stream":False
+            "messages": messages,
+            "stream": False
         }
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json"
         }
-        response = requests.post(self.api_url,json=data,headers=headers)
+        response = requests.post(self.api_url, json=data, headers=headers)
         result = response.json()
         reply = result["choices"][0]["message"]["content"]
-        self.history.append({"role": "assistant", "content": reply})
         return reply
 
     def show_history(self):
@@ -36,14 +39,15 @@ class ChatBot:
         self.history.clear()
         print("聊天历史已清空")
 
+bot = ChatBot()
+
+demo = gr.ChatInterface(
+    fn=bot.chat_fn,
+    title="千问",
+    description="ChatBot",
+)
+
 # 测试运行
 if __name__ == "__main__":
-    bot=ChatBot()
-    print("开始对话，输入 exit 结束聊天")
-    while True:
-        issue = input()
-        ans = bot.send_message(issue)
-        print(ans)
-        if issue == "exit":
-            break
+    demo.launch(theme=gr.themes.Soft(),server_name="0.0.0.0",share=True)
     # print(bot.show_history())
