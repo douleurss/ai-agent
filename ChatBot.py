@@ -50,4 +50,3 @@ demo = gr.ChatInterface(
 # 测试运行
 if __name__ == "__main__":
     demo.launch(theme=gr.themes.Soft(),server_name="0.0.0.0",share=True)
-    # print(bot.show_history())

@@ -1,8 +1,14 @@
 .idea/
+
 venv/
+
 __pycache__/
 *.pyc
 *.env
+
 chroma_db/
 *.pdf
 *.txt
+
+.gradio/
+*.pem
